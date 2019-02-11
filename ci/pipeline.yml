@@ -32,6 +32,6 @@ jobs:
       CONCOURSE_URL: {{CONCOURSE_URL}}
       GITHUB_USERNAME: ((git.username))
       GITHUB_PASSWORD: ((git.password))
-      CONCOURSE_USERNAME: ((concourse-account.username))
-      CONCOURSE_PASSWORD: ((concourse-account.password))
+      CONCOURSE_USERNAME: ((concourse-admin.username))
+      CONCOURSE_PASSWORD: ((concourse-admin.password))
       CONCOURSE_TEAM: {{TEAM_NAME}}
