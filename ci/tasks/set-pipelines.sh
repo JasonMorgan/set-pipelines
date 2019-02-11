@@ -3,6 +3,10 @@
 
 # Get fly
 curl -sS -k -f "${CONCOURSE_URL}/api/v1/cli?arch=amd64&platform=linux" > fly
+if [ $? !=0 ]; then
+    echo "failed to curl fly binary"
+    exit 1 
+fi
 chmod 0755 fly
 mv fly /usr/local/bin
 fly --version
