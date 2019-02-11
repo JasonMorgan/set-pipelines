@@ -28,7 +28,7 @@ do
   echo "loading variables from $i"
   echo "-------------------------"
   cat "$i"
-  echo "\n"
+  echo "\\n"
   if ! name=$(jq -r '.name' < "$i")
   then
     echo "failed to get name from jq"
