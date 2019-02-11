@@ -21,23 +21,31 @@ fi
 for i in repo/*.json
 do
   # Load Vars
+  echo "loading variables from $i"
+  echo "-------------------------"
+  cat $i
   name=$(jq -r '.name' < "$i")
   pipeline_yml=$(jq -r '.pipeline_def' < "$i")
   vars_file=$(jq -r '.vars_file[]' < "$i")
   # read name pipeline_yml vars_file <(jq -r '.name,.pipeline_def,.vars_file' < $i)
+  echo "-------------------------"
   echo "Working on the pipeline for $name"
   cd "$(mktemp -d)" || exit 1
 
+  echo "attempting to grab pipeline @ $pipeline_yml"
   curl -L -u "${GITHUB_USERNAME}:${GITHUB_PASSWORD}" "$pipeline_yml" -o pipeline.yml
+  echo "pipeline grabbed successfully"
   # echo $vars_file
   if [ "${vars_file}" != "" ]; then
     counter=0
     # echo "I made it into the loop for $name"
     for var in $vars_file
     do
+      echo "attempting to grab vars file @ $var"
       # echo $var
       curl -L -u "${GITHUB_USERNAME}:${GITHUB_PASSWORD}" "$var" -o vars-$counter.yml
       vars_array="$vars_array -l vars-$counter.yml"
+      echo "managed to get the vars file"
       # cat vars-$counter.yml
       counter=$(( counter + 1 ))
     done
