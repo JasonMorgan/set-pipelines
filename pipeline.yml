@@ -1,0 +1,37 @@
+---
+resources:
+- name: repo
+  type: git
+  source:
+    branch: master
+    password: ((git.password))
+    uri: https://github.com/JasonMorgan/pipelines.git
+    username: ((git.username))
+- name: source
+  type: git
+  source:
+    branch: master
+    password: ((git.password))
+    uri: https://github.com/JasonMorgan/set-pipelines.git
+    username: ((git.username))
+- name: timer
+  type: time
+  source: {interval: 30m}
+jobs:
+- name: one-pipeline-to-rule-them-all
+  serial: true
+  plan:
+  - get: timer
+    trigger: true
+  - get: repo
+    trigger: true
+  - get: source 
+  - task: set-pipelines
+    file: source/ci/tasks/set-pipeline.yml
+    params:
+      CONCOURSE_URL: {{CONCOURSE_URL}}
+      GITHUB_USERNAME: ((git.username))
+      GITHUB_PASSWORD: ((git.password))
+      CONCOURSE_USERNAME: ((concourse-account.username))
+      CONCOURSE_PASSWORD: ((concourse-account.password))
+      CONCOURSE_TEAM: {{TEAM_NAME}}
