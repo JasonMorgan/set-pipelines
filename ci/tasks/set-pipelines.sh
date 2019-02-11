@@ -2,8 +2,8 @@
 
 
 # Get fly
-curl -sS -k -f "${CONCOURSE_URL}/api/v1/cli?arch=amd64&platform=linux" > fly
-if [ $? !=0 ]; then
+if ! curl -sS -k -f "${CONCOURSE_URL}/api/v1/cli?arch=amd64&platform=linux" > fly
+then
     echo "failed to curl fly binary"
     exit 1 
 fi
@@ -27,17 +27,33 @@ do
   # Load Vars
   echo "loading variables from $i"
   echo "-------------------------"
-  cat $i
-  name=$(jq -r '.name' < "$i")
-  pipeline_yml=$(jq -r '.pipeline_def' < "$i")
-  vars_file=$(jq -r '.vars_file[]' < "$i")
+  cat "$i"
+  if ! name=$(jq -r '.name' < "$i")
+  then
+    echo "failed to get name from jq"
+    exit 1 
+  fi
+  if pipeline_yml=$(jq -r '.pipeline_def' < "$i")
+  then
+    echo "failed to get pipeline from jq"
+    exit 1 
+  fi
+  if ! vars_file=$(jq -r '.vars_file[]' < "$i")
+  then
+    echo "failed to get vars from jq"
+    exit 1 
+  fi
   # read name pipeline_yml vars_file <(jq -r '.name,.pipeline_def,.vars_file' < $i)
   echo "-------------------------"
   echo "Working on the pipeline for $name"
   cd "$(mktemp -d)" || exit 1
 
   echo "attempting to grab pipeline @ $pipeline_yml"
-  curl -L -u "${GITHUB_USERNAME}:${GITHUB_PASSWORD}" "$pipeline_yml" -o pipeline.yml
+  if ! curl -L -u "${GITHUB_USERNAME}:${GITHUB_PASSWORD}" "$pipeline_yml" -o pipeline.yml
+  then
+    echo "failed to get pipeline from $pipeline_yml"
+    exit 1 
+  fi
   echo "pipeline grabbed successfully"
   # echo $vars_file
   if [ "${vars_file}" != "" ]; then
@@ -47,7 +63,11 @@ do
     do
       echo "attempting to grab vars file @ $var"
       # echo $var
-      curl -L -u "${GITHUB_USERNAME}:${GITHUB_PASSWORD}" "$var" -o vars-$counter.yml
+      if ! curl -L -u "${GITHUB_USERNAME}:${GITHUB_PASSWORD}" "$var" -o vars-$counter.yml
+      then
+        echo "failed to get variable file from $var"
+        exit 1 
+      fi
       vars_array="$vars_array -l vars-$counter.yml"
       echo "managed to get the vars file"
       # cat vars-$counter.yml
