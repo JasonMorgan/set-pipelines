@@ -22,9 +22,9 @@ jobs:
   serial: true
   plan:
   - get: timer
-    trigger: true
+    # trigger: true # Uncomment to make the pipeline run on a schedule
   - get: repo
-    trigger: true
+    # trigger: true # Uncomment to make the pipeline run on every change to the repo.
   - get: source 
   - task: set-pipelines
     file: source/ci/tasks/set-pipeline.yml
