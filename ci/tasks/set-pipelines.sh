@@ -38,11 +38,11 @@ do
     echo "failed to get pipeline from jq"
     exit 1 
   fi
-  if ! vars_file=$(jq -r '.vars_file[]' < "$i")
-  then
-    echo "failed to get vars from jq"
-    exit 1 
-  fi
+  vars_file=$(jq -r '.vars_file[]' < "$i") > /dev/null
+  # then
+  #   echo "failed to get vars from jq"
+  #   exit 1 
+  # fi
   # read name pipeline_yml vars_file <(jq -r '.name,.pipeline_def,.vars_file' < $i)
   echo "-------------------------"
   echo "Working on the pipeline for $name"
