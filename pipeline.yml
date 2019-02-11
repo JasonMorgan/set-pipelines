@@ -27,7 +27,7 @@ jobs:
     # trigger: true # Uncomment to make the pipeline run on every change to the repo.
   - get: source 
   - task: set-pipelines
-    file: source/ci/tasks/set-pipeline.yml
+    file: source/ci/tasks/task.yml
     params:
       CONCOURSE_URL: {{CONCOURSE_URL}}
       GITHUB_USERNAME: ((git.username))
