@@ -33,7 +33,7 @@ do
     echo "failed to get name from jq"
     exit 1 
   fi
-  if pipeline_yml=$(jq -r '.pipeline_def' < "$i")
+  if ! pipeline_yml=$(jq -r '.pipeline_def' < "$i")
   then
     echo "failed to get pipeline from jq"
     exit 1 
